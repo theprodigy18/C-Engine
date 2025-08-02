@@ -23,8 +23,8 @@ project "EngineLib"
 
 	files
 	{
-		"%{prj.name}/**.h",
-		"%{prj.name}/**.c"
+		"%{prj.name}/include/**.h",
+		"%{prj.name}/src/**.c"
 	}
 
 	includedirs
@@ -61,12 +61,13 @@ project "EngineDLL"
 
 	files
 	{
-		"%{prj.name}/**.h",
-		"%{prj.name}/**.c"
+		"%{prj.name}/include/**.h",
+		"%{prj.name}/src/**.c"
 	}
 
 	includedirs
 	{
+		"%{prj.name}/include",
 		"EngineLib/include"
 	}
 
@@ -115,7 +116,7 @@ project "Editor"
 
 	includedirs
 	{
-		"EngineDLL/include"
+		"EngineDLL"
 	}
 
 	links
@@ -159,12 +160,14 @@ project "Test"
 	includedirs
 	{
 		"EngineDLL/include",
+		"EngineDLL",
 		"EngineLib/include"
 	}
 
 	links
 	{
-		"EngineLib"
+		"EngineLib",
+		"EngineDLL"
 	}
 
 	filter "system:windows"

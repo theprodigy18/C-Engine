@@ -44,3 +44,7 @@ typedef signed long long i64;
 
 typedef float  f32;
 typedef double f64;
+
+
+#define ALLOCATE(type, size) (type)malloc(size)
+#define FREE(ptr) free(ptr)

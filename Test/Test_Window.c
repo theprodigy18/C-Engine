@@ -1,5 +1,4 @@
-#include <pch.h>
-#include <Platform/Window.h>
+#include <EngineAPI.h>
 
 #include <crtdbg.h>
 
@@ -12,16 +11,16 @@ int main()
 	props.height = 720;
 
     WndHandle handle = NULL;
-	Platform_CreateWindow(&handle, &props);
+	API_CreateWindow(&handle, &props);
 
 	bool running = true;
 
 	while (running)
     {
-		running = Platform_PollEvents();
+		running = API_PollEvents();
     }
 
-	Platform_DestroyWindow(&handle);
+	API_DestroyWindow(&handle);
 
     _CrtDumpMemoryLeaks(); // panggil ini sebelum return di main()
 	return 0;

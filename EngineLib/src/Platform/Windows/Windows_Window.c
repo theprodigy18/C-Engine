@@ -5,6 +5,8 @@
 #define NO_MIN_MAX
 #include <Windows.h>
 
+#pragma region INTERNAL
+
 static bool s_isInitialized = false;
 static HINSTANCE s_hInstance = NULL;
 
@@ -16,7 +18,7 @@ typedef struct _WndHandle
 static wchar_t* ConvertUtf8ToUtf16(const char* pUtf8)
 {
 	i32 utf8Len = MultiByteToWideChar(CP_UTF8, 0, pUtf8, -1, NULL, 0);
-	wchar_t* pUtf16 = (wchar_t*)malloc(utf8Len * sizeof(wchar_t));
+	wchar_t* pUtf16 = ALLOCATE(wchar_t*, utf8Len * sizeof(wchar_t));
 	MultiByteToWideChar(CP_UTF8, 0, pUtf8, -1, pUtf16, utf8Len);
 	return pUtf16;
 }
@@ -34,6 +36,8 @@ static LRESULT CALLBACK InternalWndCallback(HWND hwnd, UINT msg, WPARAM wParam, 
 
 	return DefWindowProcW(hwnd, msg, wParam, lParam);
 }
+
+#pragma endregion
 
 
 bool Platform_CreateWindow(WndHandle* pHandle, const WndInitProps* pInitProps)
@@ -87,7 +91,7 @@ bool Platform_CreateWindow(WndHandle* pHandle, const WndInitProps* pInitProps)
 		NULL
     );
 
-	free(title);
+	FREE(title);
 
 	if (!hwnd)
 	{
@@ -98,7 +102,7 @@ bool Platform_CreateWindow(WndHandle* pHandle, const WndInitProps* pInitProps)
 	ShowWindow(hwnd, SW_SHOW);
 	UpdateWindow(hwnd);
 
-	WndHandle handle = (WndHandle*)malloc(sizeof(WndHandle));
+	WndHandle handle = ALLOCATE(WndHandle*, sizeof(WndHandle));
     ASSERT(handle);
     handle->hwnd = hwnd;
 
@@ -114,7 +118,7 @@ void Platform_DestroyWindow(WndHandle* pHandle)
 	if (handle)
 	{
         DestroyWindow(handle->hwnd);
-        free(handle);
+        FREE(handle);
 	}
 
 	*pHandle = NULL;
