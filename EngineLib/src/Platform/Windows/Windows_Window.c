@@ -1,24 +1,17 @@
 #include "pch.h"
-#include "Platform/Window.h"
+#include "Platform/Windows/Windows_Window.h"
 
-#define WIN32_LEAN_AND_MEAN
-#define NO_MIN_MAX
-#include <Windows.h>
 
 #pragma region INTERNAL
 
 static bool s_isInitialized = false;
 static HINSTANCE s_hInstance = NULL;
-
-typedef struct _WndHandle
-{
-	HWND hwnd;
-} _WndHandle;
+static u32 s_windowCount = 0;
 
 static wchar_t* ConvertUtf8ToUtf16(const char* pUtf8)
 {
 	i32 utf8Len = MultiByteToWideChar(CP_UTF8, 0, pUtf8, -1, NULL, 0);
-	wchar_t* pUtf16 = ALLOCATE(wchar_t*, utf8Len * sizeof(wchar_t));
+	wchar_t* pUtf16 = ALLOCATE_ARRAY(wchar_t, utf8Len);
 	MultiByteToWideChar(CP_UTF8, 0, pUtf8, -1, pUtf16, utf8Len);
 	return pUtf16;
 }
@@ -99,14 +92,13 @@ bool Platform_CreateWindow(WndHandle* pHandle, const WndInitProps* pInitProps)
 		return false;
 	}
 
-	ShowWindow(hwnd, SW_SHOW);
-	UpdateWindow(hwnd);
-
-	WndHandle handle = ALLOCATE(WndHandle*, sizeof(WndHandle));
+	WndHandle handle = ALLOCATE_SINGLE(_WndHandle);
     ASSERT(handle);
     handle->hwnd = hwnd;
+	handle->hdc = GetDC(hwnd);
 
 	*pHandle = handle;
+    ++s_windowCount;
 
 	return true;
 }
@@ -117,11 +109,20 @@ void Platform_DestroyWindow(WndHandle* pHandle)
 
 	if (handle)
 	{
+		ReleaseDC(handle->hwnd, handle->hdc);
         DestroyWindow(handle->hwnd);
         FREE(handle);
 	}
 
 	*pHandle = NULL;
+	--s_windowCount;
+
+	if (s_windowCount == 0)
+	{
+		UnregisterClassW(L"GameEngine", s_hInstance);
+		s_hInstance = NULL;
+		s_isInitialized = false;
+	}
 }
 
 bool Platform_PollEvents()
@@ -139,4 +140,20 @@ bool Platform_PollEvents()
     }
 
 	return true;
+}
+
+void Platform_ShowWindow(WndHandle handle)
+{
+	ShowWindow(handle->hwnd, SW_SHOW);
+	UpdateWindow(handle->hwnd);
+}
+
+void Platform_HideWindow(WndHandle handle)
+{
+	ShowWindow(handle->hwnd, SW_HIDE);
+}
+
+void Platform_SwapBuffers(WndHandle handle)
+{
+	SwapBuffers(handle->hdc);
 }

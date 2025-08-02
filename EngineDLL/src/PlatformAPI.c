@@ -17,3 +17,18 @@ bool API_PollEvents()
 {
 	return Platform_PollEvents();
 }
+
+void API_ShowWindow(WndHandle handle)
+{
+	Platform_ShowWindow(handle);
+}
+
+void API_HideWindow(WndHandle handle)
+{
+	Platform_HideWindow(handle);
+}
+
+DLL_API void API_SwapBuffers(WndHandle handle)
+{
+    Platform_SwapBuffers(handle);
+}

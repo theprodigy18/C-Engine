@@ -3,9 +3,20 @@ workspace "C-Engine"
 	configurations
 	{
 		"Debug",
-		"Release",
-		"Dist"
+		"Release"
 	}
+
+	filter "action:gmake"
+		toolset "clang"
+		location "build/gmake"
+
+	filter {"action:gmake", "configurations:Release"}
+		buildoptions { "-static-libgcc", "-static-libstdc++" }
+		linkoptions { "-static-libgcc", "-static-libstdc++" }
+
+	filter {"action:vs*", "configurations:Release"}
+		staticruntime "on"
+
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -23,16 +34,34 @@ project "EngineLib"
 
 	files
 	{
-		"%{prj.name}/include/**.h",
-		"%{prj.name}/src/**.c"
+		"%{prj.name}/include/*.h",
+		"%{prj.name}/include/Graphics/*.h",
+		"%{prj.name}/include/Platform/*.h",
+		"%{prj.name}/src/*.c",
+		"%{prj.name}/vendor/**.h"
 	}
 
 	includedirs
 	{
-		"%{prj.name}/include"
+		"%{prj.name}/include",
+		"%{prj.name}/vendor"
+	}
+
+	links 
+	{
+		"user32",
+		"opengl32"
 	}
 
 	filter "system:windows"
+		files 
+		{
+			"%{prj.name}/include/Graphics/OpenGL/Windows/**.h",
+			"%{prj.name}/src/Graphics/OpenGL/Windows/**.c",
+			"%{prj.name}/include/Platform/Windows/**.h",
+			"%{prj.name}/src/Platform/Windows/**.c"
+		}
+
 		defines "PLATFORM_WINDOWS"
 		systemversion "latest"
 
@@ -43,12 +72,6 @@ project "EngineLib"
 	filter "configurations:Release"
 		defines "RELEASE"
 		optimize "on"
-		staticruntime "on"
-
-	filter "configurations:Dist"
-		defines "DIST"
-		optimize "on"
-		staticruntime "on"
 
 project "EngineDLL"
 	location "EngineDLL"
@@ -92,12 +115,6 @@ project "EngineDLL"
 	filter "configurations:Release"
 		defines "RELEASE"
 		optimize "on"
-		staticruntime "on"
-
-	filter "configurations:Dist"
-		defines "DIST"
-		optimize "on"
-		staticruntime "on"
 
 project "Editor"
 	location "Editor"
@@ -135,12 +152,6 @@ project "Editor"
 	filter "configurations:Release"
 		defines "RELEASE"
 		optimize "on"
-		staticruntime "on"
-
-	filter "configurations:Dist"
-		defines "DIST"
-		optimize "on"
-		staticruntime "on"
 
 project "Test"
 	location "Test"
@@ -181,9 +192,3 @@ project "Test"
 	filter "configurations:Release"
 		defines "RELEASE"
 		optimize "on"
-		staticruntime "on"
-
-	filter "configurations:Dist"
-		defines "DIST"
-		optimize "on"
-		staticruntime "on"

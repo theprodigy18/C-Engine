@@ -25,12 +25,21 @@
 #define DBG_BREAK()
 #endif // DEBUG
 
+#include "log.h"
+
 #ifdef DEBUG
-#define ASSERT(x) if (!(x)) DBG_BREAK();
+#define ASSERT(x) \
+    if (!(x)) DBG_BREAK()
+#define ASSERT_MSG(x, ...)      \
+    if (!(x))                   \
+    {                           \
+        LOG_ERROR(__VA_ARGS__); \
+        DBG_BREAK();            \
+    }
 #else
 #define ASSERT(x)
+#define ASSERT_MSG(x, ...)
 #endif // DEBUG
-
 
 typedef unsigned char      u8;
 typedef unsigned short     u16;
@@ -45,6 +54,11 @@ typedef signed long long i64;
 typedef float  f32;
 typedef double f64;
 
-
-#define ALLOCATE(type, size) (type)malloc(size)
+#define ALLOCATE(T, size) (T) malloc(size)
+#define ALLOCATE_SINGLE(T) (T*) malloc(sizeof(T))
+#define ALLOCATE_ARRAY(T, count) (T*) malloc(count * sizeof(T))
+#define ALLOCATE_SINGLE_ZEROED(T) (T*) calloc(1, sizeof(T))
+#define ALLOCATE_ARRAY_ZEROED(T, count) (T*) calloc(count, sizeof(T))
+#define ZERO_MEM(ptr) memset(ptr, 0, sizeof(*ptr))
+#define ZERO_MEM_ARRAY(ptr, count) memset(ptr, 0, count * sizeof(*ptr))
 #define FREE(ptr) free(ptr)
