@@ -26,7 +26,7 @@ enum TextColor
 };
 
 // --- Internal Logging ---
-static inline void LogVA(const char* prefix, const char* file, int line, int color, const char* fmt, va_list args)
+static inline void _LogVA(const char* prefix, const char* file, int line, int color, const char* fmt, va_list args)
 {
     static const char* colorCodes[TEXT_COLOR_COUNT] = {
         "\x1b[30m", "\x1b[31m", "\x1b[32m", "\x1b[33m",
@@ -39,18 +39,18 @@ static inline void LogVA(const char* prefix, const char* file, int line, int col
     printf("%s%s [%s:%d] %s\x1b[0m\n", colorCodes[color], prefix, file, line, buffer);
 }
 
-inline void Log(const char* prefix, const char* file, int line, int color, const char* fmt, ...)
+static inline void _Log(const char* prefix, const char* file, int line, int color, const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    LogVA(prefix, file, line, color, fmt, args);
+    _LogVA(prefix, file, line, color, fmt, args);
     va_end(args);
 }
 
 #ifdef DEBUG
-#define LOG_TRACE(...) Log("TRACE: ", __FILE__, __LINE__, TEXT_COLOR_GREEN, __VA_ARGS__) // Log Trace.
-#define LOG_WARN(...) Log("WARN:  ", __FILE__, __LINE__, TEXT_COLOR_YELLOW, __VA_ARGS__) // Log Warning.
-#define LOG_ERROR(...) Log("ERROR: ", __FILE__, __LINE__, TEXT_COLOR_RED, __VA_ARGS__)   // Log Error.
+#define LOG_TRACE(...) _Log("TRACE: ", __FILE__, __LINE__, TEXT_COLOR_GREEN, __VA_ARGS__) // Log Trace.
+#define LOG_WARN(...) _Log("WARN:  ", __FILE__, __LINE__, TEXT_COLOR_YELLOW, __VA_ARGS__) // Log Warning.
+#define LOG_ERROR(...) _Log("ERROR: ", __FILE__, __LINE__, TEXT_COLOR_RED, __VA_ARGS__)   // Log Error.
 
 #else
 #define LOG_TRACE(...)

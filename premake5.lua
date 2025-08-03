@@ -6,16 +6,27 @@ workspace "C-Engine"
 		"Release"
 	}
 
-	filter "action:gmake"
-		toolset "clang"
-		location "build/gmake"
-
 	filter {"action:gmake", "configurations:Release"}
 		buildoptions { "-static-libgcc", "-static-libstdc++" }
 		linkoptions { "-static-libgcc", "-static-libstdc++" }
 
 	filter {"action:vs*", "configurations:Release"}
 		staticruntime "on"
+
+	filter "system:windows"
+		defines	"PLATFORM_WINDOWS"
+		systemversion "latest"
+
+	filter "system:linux"
+		defines "PLATFORM_LINUX"
+
+	filter "configurations:Debug"
+		defines "DEBUG"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "RELEASE"
+		optimize "on"
 
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
@@ -47,12 +58,6 @@ project "EngineLib"
 		"%{prj.name}/vendor"
 	}
 
-	links 
-	{
-		"user32",
-		"opengl32"
-	}
-
 	filter "system:windows"
 		files 
 		{
@@ -61,17 +66,29 @@ project "EngineLib"
 			"%{prj.name}/include/Platform/Windows/**.h",
 			"%{prj.name}/src/Platform/Windows/**.c"
 		}
+		links 
+		{
+			"user32",
+			"opengl32"
+		}
 
-		defines "PLATFORM_WINDOWS"
-		systemversion "latest"
+	filter "system:linux"
+		files
+		{
+			"%{prj.name}/include/Graphics/OpenGL/Linux/**.h",
+			"%{prj.name}/src/Graphics/OpenGL/Linux/**.c",
+			"%{prj.name}/include/Platform/Linux/**.h",
+			"%{prj.name}/src/Platform/Linux/**.c"
+		}
+        links
+        {
+            "GL",
+            "pthread",
+            "X11",
+            "EGL"
+        }
 
-	filter "configurations:Debug"
-		defines "DEBUG"
-		symbols "on"
-
-	filter "configurations:Release"
-		defines "RELEASE"
-		optimize "on"
+        buildoptions { "-fPIC" }
 
 project "EngineDLL"
 	location "EngineDLL"
@@ -104,18 +121,6 @@ project "EngineDLL"
 		"EngineLib"
 	}
 
-	filter "system:windows"
-		defines "PLATFORM_WINDOWS"
-		systemversion "latest"
-
-	filter "configurations:Debug"
-		defines "DEBUG"
-		symbols "on"
-
-	filter "configurations:Release"
-		defines "RELEASE"
-		optimize "on"
-
 project "Editor"
 	location "Editor"
 	kind "ConsoleApp"
@@ -140,18 +145,6 @@ project "Editor"
 	{
 		"EngineDLL"
 	}
-
-	filter "system:windows"
-		defines "PLATFORM_WINDOWS"
-		systemversion "latest"
-
-	filter "configurations:Debug"
-		defines "DEBUG"
-		symbols "on"
-
-	filter "configurations:Release"
-		defines "RELEASE"
-		optimize "on"
 
 project "Test"
 	location "Test"
@@ -181,14 +174,11 @@ project "Test"
 		"EngineDLL"
 	}
 
-	filter "system:windows"
-		defines "PLATFORM_WINDOWS"
-		systemversion "latest"
-
-	filter "configurations:Debug"
-		defines "DEBUG"
-		symbols "on"
-
-	filter "configurations:Release"
-		defines "RELEASE"
-		optimize "on"
+    filter "system:linux"
+        links
+        {
+            "GL",
+            "pthread",
+            "X11",
+            "EGL"
+        }

@@ -4,9 +4,8 @@
 
 bool API_CreateWindow(WndHandle* pHandle, const WndInitProps* pInitProps)
 {
-	return Platform_CreateWindow(pHandle, pInitProps);
+    return Platform_CreateWindow(pHandle, pInitProps);
 }
-
 
 void API_DestroyWindow(WndHandle* pHandle)
 {
@@ -15,20 +14,15 @@ void API_DestroyWindow(WndHandle* pHandle)
 
 bool API_PollEvents()
 {
-	return Platform_PollEvents();
+    return Platform_PollEvents();
 }
 
 void API_ShowWindow(WndHandle handle)
 {
-	Platform_ShowWindow(handle);
+    Platform_ShowWindow(handle);
 }
 
 void API_HideWindow(WndHandle handle)
 {
-	Platform_HideWindow(handle);
-}
-
-DLL_API void API_SwapBuffers(WndHandle handle)
-{
-    Platform_SwapBuffers(handle);
+    Platform_HideWindow(handle);
 }

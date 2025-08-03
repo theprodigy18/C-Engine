@@ -159,7 +159,7 @@ bool Graphics_CreateGraphics(GfxHandle* pHandle, const GfxInitProps* pInitProps)
             return false;
         }
 
-		ShowWindow(dummyHandle, SW_HIDE);
+        ShowWindow(dummyHandle, SW_HIDE);
 
         PIXELFORMATDESCRIPTOR pfd;
         pfd.nSize        = sizeof(PIXELFORMATDESCRIPTOR);
@@ -281,34 +281,39 @@ bool Graphics_CreateGraphics(GfxHandle* pHandle, const GfxInitProps* pInitProps)
 
     *pHandle = handle;
 
-	RECT rc;
-	GetClientRect(wndHandle->hwnd, &rc);
+    RECT rc;
+    GetClientRect(wndHandle->hwnd, &rc);
 
-	glViewport(0, 0, rc.right - rc.left, rc.bottom - rc.top);
+    glViewport(0, 0, rc.right - rc.left, rc.bottom - rc.top);
 
     return true;
 }
 
 void Graphics_SetCurrentGraphics(GfxHandle handle)
 {
-	wglMakeCurrent(handle->hdc, handle->context);
+    wglMakeCurrent(handle->hdc, handle->context);
 }
 
 void Graphics_ClearColor(f32 r, f32 g, f32 b, f32 a)
 {
-	glClearColor(r, g, b, a);
-	glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(r, g, b, a);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Graphics_DestroyGraphics(GfxHandle* pHandle)
 {
-	GfxHandle handle = *pHandle;
-	if (handle)
-	{
-		wglMakeCurrent(NULL, NULL);
-		wglDeleteContext(handle->context);
-		FREE(handle);
-	}
+    GfxHandle handle = *pHandle;
+    if (handle)
+    {
+        wglMakeCurrent(NULL, NULL);
+        wglDeleteContext(handle->context);
+        FREE(handle);
+    }
 
-	*pHandle = NULL;
+    *pHandle = NULL;
+}
+
+void Graphics_SwapBuffers(GfxHandle handle)
+{
+    SwapBuffers(handle->hdc);
 }

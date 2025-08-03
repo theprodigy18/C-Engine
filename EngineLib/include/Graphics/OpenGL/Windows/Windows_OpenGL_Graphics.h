@@ -2,9 +2,10 @@
 
 #include "Graphics/Graphics.h"
 
-#include "opengl/glcorearb.h"
-#include "opengl/glext.h"
-#include "opengl/wglext.h"
+#include <opengl/glcorearb.h>
+#include <opengl/glext.h>
+#include <opengl/wglext.h>
+
 #include <gl/GL.h>
 
 

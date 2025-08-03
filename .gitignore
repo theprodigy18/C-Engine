@@ -7,9 +7,14 @@ bin-int/
 
 # VS settings.
 .vs/
+.cache/
 
 # C++ formatting files.
 .clang-format
+Makefile
+compile_commands.json
+gen_cc.sh
+heaptrack*
 
 
 

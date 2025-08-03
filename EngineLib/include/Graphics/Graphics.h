@@ -12,4 +12,6 @@ void Graphics_ClearColor(f32 r, f32 g, f32 b, f32 a);
 
 void Graphics_DestroyGraphics(GfxHandle* pHandle);
 
+void Graphics_SwapBuffers(GfxHandle handle);
+
 EXTERN_C_END
